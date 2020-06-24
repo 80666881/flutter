@@ -1,112 +1,89 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(FluApp());
+void main() {
+  runApp(
+    // Provide the model to all widgets within the app. We're using
+    // ChangeNotifierProvider because that's a simple way to rebuild
+    // widgets when a model changes. We could also just use
+    // Provider, but then we would have to listen to Counter ourselves.
+    //
+    // Read Provider's docs to learn about all the available providers.
+    ChangeNotifierProvider(
+      // Initialize the model in the builder. That way, Provider
+      // can own Counter's lifecycle, making sure to call `dispose`
+      // when not needed anymore.
+      create: (context) => Counter(),
+      child: MyApp(),
+    ),
+  );
+}
 
-//定义路由表
-final routes = {
-  '/': (context, {arguments}) => HomePage(),
-  '/newRoute': (context, {arguments}) => NewRoute(),
-  '/withParams': (context, {arguments}) => WithParamsRoute(arguments: arguments),
-};
+/// Simplest possible model, with just one field.
+///
+/// [ChangeNotifier] is a class in `flutter:foundation`. [Counter] does
+/// _not_ depend on Provider.
+class Counter with ChangeNotifier {
+  int value = 0;
 
-class HomePage extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Center(
-            child: Text('HomePage'),
-          ),
-          FlatButton(
-            child:Text('跳转到newRoute页'),
-            onPressed:(){ Navigator.of(context).pushNamed('newRoute');},
-          )
-        ],
-      )
-
-    );
+  void increment() {
+    value += 1;
+    notifyListeners();
   }
 }
 
-class FluApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      //注册路由表
-      onGenerateRoute: (RouteSettings settings) {
-        return MaterialPageRoute(builder: (context) {
-          String routeName = settings.name;
-          Map args = settings.arguments;
-          print('routeName,$routeName');
-          print('args,$args');
-
-          // 如果访问的路由页需要登录，但当前未登录，则直接返回登录页路由，
-          // 引导用户登录；其它情况则正常打开路由。
-          if(routes.containsKey(routeName)){
-            var func = routes[routeName];
-            return func(context);
-          }else{
-            return Text('找不到该页面');
-          }
-        });
-      },
-      theme: new ThemeData(primaryColor: Colors.white),
-//      home: NewRoute(),
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(),
     );
   }
 }
 
-class NewRoute extends StatelessWidget {
+class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: new Text('new route')),
-        body: Center(
-            child: Column(
-          children: <Widget>[
-            Text('this is new route'),
-            FlatButton(
-              child: Text('跳转到带参路由'),
-              onPressed: () async {
-                Navigator.of(context).pushNamed("withPrams",
-                    arguments: {'d': '222', 's': '333'});
-//                Navigator.push(context,
-//                  MaterialPageRoute(builder: (context) {
-//                  return WithParamsRoute(
-//                    text: '带参路由携带参数',
-//                  );
-//                }));
-              },
-            )
-          ],
-        )));
-  }
-}
-
-class WithParamsRoute extends StatelessWidget {
-  WithParamsRoute({Key key, this.text, this.arguments}) : super(key: key);
-  final String text;
-  final Map arguments;
-
-  @override
-  Widget build(BuildContext context) {
-//    var args = ModalRoute.of(context).settings.arguments;
-    print('arguments,$arguments');
-    return new Scaffold(
-      appBar: new AppBar(
-        title: Text('WithParamsRoute'),
+      appBar: AppBar(
+        title: Text('Flutter Demo Home Page'),
       ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(text),
-            FlatButton(
-              onPressed: () => Navigator.pop(context, "我是返回值"),
-              child: Text("返回"),
-            )
+            Text('You have pushed the button this many times:'),
+            // Consumer looks for an ancestor Provider widget
+            // and retrieves its model (Counter, in this case).
+            // Then it uses that model to build widgets, and will trigger
+            // rebuilds if the model is updated.
+            Consumer<Counter>(
+              builder: (context, counter, child) => Text(
+                '${counter.value}',
+                style: Theme.of(context).textTheme.headline,
+              ),
+            ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        // Provider.of is another way to access the model object held
+        // by an ancestor Provider. By default, even this listens to
+        // changes in the model, and rebuilds the whole encompassing widget
+        // when notified.
+        //
+        // By using `listen: false` below, we are disabling that
+        // behavior. We are only calling a function here, and so we don't care
+        // about the current value. Without `listen: false`, we'd be rebuilding
+        // the whole MyHomePage whenever Counter notifies listeners.
+        onPressed: () =>
+            Provider.of<Counter>(context, listen: false).increment(),
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
       ),
     );
   }
