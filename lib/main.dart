@@ -14,6 +14,7 @@ class MyAppHome extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return MaterialApp(
+      initialRoute: '/scaffold',
       onGenerateRoute: (RouteSettings settings){
         return MaterialPageRoute(builder: (context){
           String routeName = settings.name;
