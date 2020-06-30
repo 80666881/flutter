@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 
 class ScaffoldRoute extends StatefulWidget {
   @override
@@ -9,7 +10,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute>
     with SingleTickerProviderStateMixin {
   int _seletedCurIdx = 0;
   TabController _tabController; //需要定义一个// Controller
-  List tabs = ["新闻", "历史", "图片"];
+  List tabs = ["新闻1", "历史", "图片"];
 
   @override
   void initState() {
@@ -20,6 +21,32 @@ class _ScaffoldRouteState extends State<ScaffoldRoute>
       print('index,${_tabController.index}');
       _onItemTapped(_tabController.index);
     });
+
+    Future<Response> getData() async {
+      String url = "http://v.juhe.cn/toutiao/index";
+      String key = "4c52313fc9247e5b4176aed5ddd56ad7";
+      String type = "keji";
+
+      print("开始请求数据");
+      Response response =
+      await Dio().get(url, queryParameters: {"type": type, "key": key});
+
+      print("请求完成");
+
+      return response;
+    }
+
+    getData().then((result) {
+      print("接口返回的数据是:${result}");
+    }).whenComplete((){
+      print("异步任务处理完成");
+    }).catchError((){
+      print("出现异常了");
+    });
+
+    print("我是在请求数据后面的代码呦！");
+
+
   }
 
   @override
@@ -79,7 +106,11 @@ class _ScaffoldRouteState extends State<ScaffoldRoute>
           //创建3个Tab页
           return Container(
             alignment: Alignment.center,
-            child: Text(e, textScaleFactor: 5),
+            child: Column(
+              children: <Widget>[
+                Text(e, textScaleFactor: 5),
+              ],
+            )
           );
         }).toList(),
       ),

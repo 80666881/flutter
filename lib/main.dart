@@ -14,7 +14,7 @@ class MyAppHome extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return MaterialApp(
-      initialRoute: '/scaffold',
+      initialRoute: '/tabBar',
       onGenerateRoute: (RouteSettings settings){
         return MaterialPageRoute(builder: (context){
           String routeName = settings.name;
@@ -33,6 +33,19 @@ class MyAppHome extends StatelessWidget {
           }
         });
       },
+//      home:Myhome()
+    );
+  }
+}
+
+class Myhome extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: AppBar(
+        title:Text('2222')
+      ),
     );
   }
 }
