@@ -10,13 +10,17 @@ class TabBar1 extends StatefulWidget {
 
 class _TabBarState extends State with SingleTickerProviderStateMixin {
   TabController _tabController;
+  ScrollController _scrollController;
+  PageController _pageController;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     //tabController
-    _tabController = new TabController(length: 3, vsync: this);
+    _tabController = new TabController(length: 6, vsync: this);
+    _pageController = new PageController();
+    _scrollController = new ScrollController();
   }
 
   @override
@@ -37,7 +41,6 @@ class _TabBarState extends State with SingleTickerProviderStateMixin {
   );
   final Color _backgroundColor = Colors.amberAccent;
   final Widget _title = Text('tabbar');
-  PageController _pageController = new PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +61,36 @@ class _TabBarState extends State with SingleTickerProviderStateMixin {
               ],
             )
           ],
+          bottom: TabBar(
+            isScrollable: true,
+            controller: _tabController,
+            tabs: <Widget>[
+              Tab(
+                text: 'Tabs1',
+                icon: Icon(Icons.alarm),
+              ),
+              Tab(
+                text: 'Tabs2',
+                icon: Icon(Icons.alarm),
+              ),
+              Tab(
+                text: 'Tabs3',
+                icon: Icon(Icons.alarm),
+              ),
+              Tab(
+                text: 'Tabs4',
+                icon: Icon(Icons.alarm),
+              ),
+              Tab(
+                text: 'Tabs5',
+                icon: Icon(Icons.alarm),
+              ),
+              Tab(
+                text: 'Tabs6',
+                icon: Icon(Icons.alarm),
+              ),
+            ],
+          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: _floatingActionButton,
@@ -78,42 +111,15 @@ class _TabBarState extends State with SingleTickerProviderStateMixin {
           ),
         ),
         body: Builder(
-            builder: (context) => new PageView(
-                  controller: _pageController,
-                  children: [
-                    Container(
-//              color: Colors.pink,
-                        child: ButtonBar(
-                      children: <Widget>[
-                        RaisedButton(
-                          onPressed: () {},
-                          color: Colors.yellowAccent,
-                          child: Text('1112'),
-                        ),
-                        GestureDetector(
-                            onTap: () {
-                              final snackBar = new SnackBar(
-                                content: Text('屏幕底部消息'),
-                                backgroundColor: Colors.black,
-                                action: SnackBarAction(
-                                  label: '撤销',
-                                  onPressed: () {},
-                                ),
-                                duration: Duration(milliseconds: 20000),
-                              );
-
-                              Scaffold.of(context).showSnackBar(snackBar);
-                            },
-                            child: Text('显示屏幕底部消息'))
-                      ],
-                    )),
-                    Text('2222'),
-                    Text('3333')
-                  ],
-                  onPageChanged: (index) {
-                    ///页面触摸作用滑动回调，用于同步tab选中状态
-                    _tabController.animateTo(index);
-                  },
-                )));
+          builder: (context) =>
+              new TabBarView(controller: _tabController, children: [
+            Text('选项卡1'),
+            Text('选项卡2'),
+            Text('选项卡3'),
+            Text('选项卡4'),
+            Text('选项卡5'),
+            Text('选项卡6'),
+          ]),
+        ));
   }
 }
