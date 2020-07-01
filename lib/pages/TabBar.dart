@@ -12,7 +12,7 @@ class _TabBarState extends State with SingleTickerProviderStateMixin {
   TabController _tabController;
   ScrollController _scrollController;
   PageController _pageController;
-
+  int _curIdx = 1;
   @override
   void initState() {
     // TODO: implement initState
@@ -56,70 +56,43 @@ class _TabBarState extends State with SingleTickerProviderStateMixin {
                 PopupMenuItem(
                     value: 'friend',
                     child: IconButton(
+                      onPressed: (){},
                       icon: Icon(Icons.face),
                     ))
               ],
             )
           ],
-          bottom: TabBar(
-            isScrollable: true,
-            controller: _tabController,
-            tabs: <Widget>[
-              Tab(
-                text: 'Tabs1',
-                icon: Icon(Icons.alarm),
-              ),
-              Tab(
-                text: 'Tabs2',
-                icon: Icon(Icons.alarm),
-              ),
-              Tab(
-                text: 'Tabs3',
-                icon: Icon(Icons.alarm),
-              ),
-              Tab(
-                text: 'Tabs4',
-                icon: Icon(Icons.alarm),
-              ),
-              Tab(
-                text: 'Tabs5',
-                icon: Icon(Icons.alarm),
-              ),
-              Tab(
-                text: 'Tabs6',
-                icon: Icon(Icons.alarm),
-              ),
-            ],
-          ),
+
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: _floatingActionButton,
-        bottomNavigationBar: BottomAppBar(
-//          notchMargin: 10,
-          color: Colors.green,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.face),
-              ),
-              IconButton(
-                icon: Icon(Icons.alarm),
-              )
-            ],
-          ),
+        bottomNavigationBar:BottomNavigationBar(
+          currentIndex: _curIdx,
+          type:BottomNavigationBarType.fixed,
+          onTap: (int idx) {
+            setState(() {
+              _curIdx = idx;
+            });
+          },
+          //选中的颜色
+          fixedColor: Colors.red,
+          items: [
+            BottomNavigationBarItem(
+                title:Text('聊天'),
+                icon:Icon(Icons.chat)
+            ),
+            BottomNavigationBarItem(
+                title:Text('朋友圈'),
+                icon:Icon(Icons.child_friendly)
+            ),
+            BottomNavigationBarItem(
+                title:Text('我的'),
+                icon:Icon(Icons.person)
+            )
+          ],
         ),
         body: Builder(
-          builder: (context) =>
-              new TabBarView(controller: _tabController, children: [
-            Text('选项卡1'),
-            Text('选项卡2'),
-            Text('选项卡3'),
-            Text('选项卡4'),
-            Text('选项卡5'),
-            Text('选项卡6'),
-          ]),
+          builder: (context) =>Container(
+
+          )
         ));
   }
 }
