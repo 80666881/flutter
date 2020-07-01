@@ -3,74 +3,117 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class TabBar1 extends StatefulWidget{
+class TabBar1 extends StatefulWidget {
   @override
-  _TabBarState createState()=>_TabBarState();
+  _TabBarState createState() => _TabBarState();
 }
 
-class _TabBarState extends State with SingleTickerProviderStateMixin{
-  List<String> items = ["1", "2", "3", "4", "5", "6", "7", "8"];
-  RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+class _TabBarState extends State with SingleTickerProviderStateMixin {
+  TabController _tabController;
 
-  void _onRefresh() async{
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
-    _refreshController.refreshCompleted();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //tabController
+    _tabController = new TabController(length: 3, vsync: this);
   }
 
-  void _onLoading() async{
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use loadFailed(),if no data return,use LoadNodata()
-    items.add((items.length+1).toString());
-    if(mounted)
-      setState(() {
-
-      });
-    _refreshController.loadComplete();
+  @override
+  void dispose() {
+    ///页面销毁时，销毁控制器
+    _tabController.dispose();
+    super.dispose();
   }
+
+  Widget _floatingActionButton = FloatingActionButton(
+    child: Icon(Icons.add),
+    tooltip: "Hello",
+    foregroundColor: Colors.white,
+    backgroundColor: Colors.black,
+    onPressed: () {
+      print('1222');
+    },
+  );
+  final Color _backgroundColor = Colors.amberAccent;
+  final Widget _title = Text('tabbar');
+  PageController _pageController = new PageController();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: true,
-        header: WaterDropHeader(),
-        footer: CustomFooter(
-          builder: (BuildContext context,LoadStatus mode){
-            Widget body ;
-            if(mode==LoadStatus.idle){
-              body =  Text("上拉加载");
-            }
-            else if(mode==LoadStatus.loading){
-              body =  CupertinoActivityIndicator();
-            }
-            else if(mode == LoadStatus.failed){
-              body = Text("加载失败！点击重试！");
-            }
-            else if(mode == LoadStatus.canLoading){
-              body = Text("松手,加载更多!");
-            }
-            else{
-              body = Text("没有更多数据了!");
-            }
-            return Container(
-              height: 55.0,
-              child: Center(child:body),
-            );
-          },
+    // TODO: implement build
+    return new Scaffold(
+        appBar: AppBar(
+          backgroundColor: _backgroundColor,
+          title: _title,
+          actions: <Widget>[
+            PopupMenuButton(
+              color: Colors.white,
+              itemBuilder: (BuildContext context) => [
+                PopupMenuItem(
+                    value: 'friend',
+                    child: IconButton(
+                      icon: Icon(Icons.face),
+                    ))
+              ],
+            )
+          ],
         ),
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        onLoading: _onLoading,
-        child: ListView.builder(
-          itemBuilder: (c, i) => Card(child: Center(child: Text(items[i]))),
-          itemExtent: 100.0,
-          itemCount: items.length,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: _floatingActionButton,
+        bottomNavigationBar: BottomAppBar(
+//          notchMargin: 10,
+          color: Colors.green,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.face),
+              ),
+              IconButton(
+                icon: Icon(Icons.alarm),
+              )
+            ],
+          ),
         ),
-      ),
-    );
+        body: Builder(
+            builder: (context) => new PageView(
+                  controller: _pageController,
+                  children: [
+                    Container(
+//              color: Colors.pink,
+                        child: ButtonBar(
+                      children: <Widget>[
+                        RaisedButton(
+                          onPressed: () {},
+                          color: Colors.yellowAccent,
+                          child: Text('1112'),
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              final snackBar = new SnackBar(
+                                content: Text('屏幕底部消息'),
+                                backgroundColor: Colors.black,
+                                action: SnackBarAction(
+                                  label: '撤销',
+                                  onPressed: () {},
+                                ),
+                                duration: Duration(milliseconds: 20000),
+                              );
+
+                              Scaffold.of(context).showSnackBar(snackBar);
+                            },
+                            child: Text('显示屏幕底部消息'))
+                      ],
+                    )),
+                    Text('2222'),
+                    Text('3333')
+                  ],
+                  onPageChanged: (index) {
+                    ///页面触摸作用滑动回调，用于同步tab选中状态
+                    _tabController.animateTo(index);
+                  },
+                )));
   }
 }

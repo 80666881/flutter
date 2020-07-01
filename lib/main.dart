@@ -15,6 +15,7 @@ class MyAppHome extends StatelessWidget {
     // TODO: implement build
     return MaterialApp(
       initialRoute: '/tabBar',
+      debugShowCheckedModeBanner: false,
       onGenerateRoute: (RouteSettings settings){
         return MaterialPageRoute(builder: (context){
           String routeName = settings.name;
